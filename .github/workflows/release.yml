@@ -97,12 +97,57 @@ jobs:
             echo "sha_file=${sha_file}"
           } >> "${GITHUB_OUTPUT}"
 
+      - name: Resolve latest release policy
+        id: release_policy
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${GITHUB_REF_NAME}"
+          make_latest=false
+
+          github_host="${GITHUB_SERVER_URL#https://}"
+          github_host="${github_host#http://}"
+          default_branch="$(gh api --hostname "${github_host}" "repos/${GITHUB_REPOSITORY}" --jq '.default_branch')"
+
+          git fetch --no-tags origin "${default_branch}"
+
+          default_trino_version="$(
+            git show FETCH_HEAD:pom.xml \
+              | sed -n '/<parent>/,/<\/parent>/ s/.*<version>\([^<]*\)<\/version>.*/\1/p' \
+              | head -n 1
+          )"
+
+          if [[ -z "${default_trino_version}" ]]; then
+            echo "Could not determine Trino version from ${default_branch}:pom.xml." >&2
+            exit 1
+          fi
+
+          if [[ "${tag}" =~ ^trino-([0-9]+)-r[0-9]+$ ]]; then
+            tag_trino_version="${BASH_REMATCH[1]}"
+            if [[ "${tag_trino_version}" == "${default_trino_version}" ]]; then
+              make_latest=true
+            fi
+          fi
+
+          {
+            echo "default_branch=${default_branch}"
+            echo "default_trino_version=${default_trino_version}"
+            echo "make_latest=${make_latest}"
+          } >> "${GITHUB_OUTPUT}"
+
+          echo "Default branch ${default_branch} uses Trino ${default_trino_version}."
+          echo "Release ${tag} make_latest=${make_latest}."
+
       - name: Publish GitHub release
         shell: bash
         run: |
           set -euo pipefail
 
           tag="${GITHUB_REF_NAME}"
+          make_latest="${{ steps.release_policy.outputs.make_latest }}"
+          github_host="${GITHUB_SERVER_URL#https://}"
+          github_host="${github_host#http://}"
 
           cat > RELEASE_NOTES.md <<EOF
           Automated release for ${tag}.
@@ -123,12 +168,30 @@ jobs:
               "${{ steps.assets.outputs.sha_file }}" \
               --clobber
           else
-            gh release create "${tag}" \
-              "${{ steps.assets.outputs.plugin_zip }}" \
-              "${{ steps.assets.outputs.sha_file }}" \
-              --title "${tag}" \
+            release_create_args=(
+              "${tag}"
+              "${{ steps.assets.outputs.plugin_zip }}"
+              "${{ steps.assets.outputs.sha_file }}"
+              --title "${tag}"
               --notes-file RELEASE_NOTES.md
+              --verify-tag
+            )
+
+            if [[ "${make_latest}" == "true" ]]; then
+              release_create_args+=(--latest)
+            else
+              release_create_args+=(--latest=false)
+            fi
+
+            gh release create "${release_create_args[@]}"
           fi
+
+          release_id="$(gh api --hostname "${github_host}" "repos/${GITHUB_REPOSITORY}/releases/tags/${tag}" --jq '.id')"
+          gh api --hostname "${github_host}" \
+            --method PATCH \
+            "repos/${GITHUB_REPOSITORY}/releases/${release_id}" \
+            -f "make_latest=${make_latest}" \
+            --silent
 
       - name: Update supported release index
         shell: bash
