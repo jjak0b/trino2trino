@@ -860,7 +860,7 @@ abstract class TestTrinoConnectorIntegration
         assertThat(result.getOnlyColumnAsSet()).containsExactly(1);
 
         String explain = computeActual("EXPLAIN " + sql).getOnlyValue().toString();
-        assertThat(explain).contains("constraints=[ParameterizedExpression[expression=(CAST(\"c\" AS varchar) = \"v\")");
+        assertThat(explain).contains("constraints=[ParameterizedExpression[expression=(\"v\" = CAST(\"c\" AS varchar))");
         assertThat(explain).doesNotContain("ScanFilterProject");
     }
 

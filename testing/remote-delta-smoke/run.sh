@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 compose_file="${repo_root}/testing/remote-delta-smoke/docker-compose.yml"
 project_name="${REMOTE_DELTA_SMOKE_PROJECT_NAME:-trino2trino-remote-delta-smoke}"
-plugin_dir="${repo_root}/target/trino-trino-482"
+plugin_dir="${repo_root}/target/trino-trino-483"
 log_dir="${REMOTE_DELTA_SMOKE_LOG_DIR:-${repo_root}/target/remote-delta-smoke}"
 compose_touched=false
 

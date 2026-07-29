@@ -6,7 +6,7 @@ as a local read-only catalog.
 ## Requirements
 
 - Remote Trino must be reachable through the Trino JDBC driver
-- This connector is currently tested against Trino 482 querying remote Trino 482
+- This connector is currently tested against Trino 483 querying remote Trino 483
 
 ## Configuration
 
@@ -323,7 +323,7 @@ The test suite is centered on the generic contract exposed by remote Trino:
 - federation behavior
 
 The default ``Build and Test`` CI workflow also runs a Docker-based remote Delta
-smoke test for the production shape where a small federated Trino 482 cluster
-queries a separate Trino 482 cluster with a Delta Lake catalog. It reuses the
-``target/trino-trino-482`` package produced by ``mvn -B clean verify`` and is
+smoke test for the production shape where a small federated Trino 483 cluster
+queries a separate Trino 483 cluster with a Delta Lake catalog. It reuses the
+``target/trino-trino-483`` package produced by ``mvn -B clean verify`` and is
 documented in ``docs/remote-delta-smoke.md``.

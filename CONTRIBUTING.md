@@ -60,8 +60,8 @@ SELECT * FROM trino.tpch.tiny.nation LIMIT 5;
 ## Delta Lake Smoke Test
 
 The default `Build and Test` CI workflow validates the packaged plugin against
-a separate Trino 482 cluster backed by a Delta Lake catalog. It reuses the
-`target/trino-trino-482` package produced by `mvn -B clean verify`.
+a separate Trino 483 cluster backed by a Delta Lake catalog. It reuses the
+`target/trino-trino-483` package produced by `mvn -B clean verify`.
 
 To run the same smoke test locally:
 
