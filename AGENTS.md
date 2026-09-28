@@ -1,4 +1,4 @@
-# Repository guidance
+# Agent instructions
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before working in this repository.
-Follow its branch naming rules when creating or renaming a work branch.
+Read and follow [CONTRIBUTING.md](CONTRIBUTING.md) before making changes,
+including its branch naming and test requirements.
