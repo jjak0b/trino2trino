@@ -6,6 +6,16 @@
 - **Maven 3.9+**
 - **Docker** and **Docker Compose** (for local testing)
 
+## Branch names
+
+Name work branches `<type>/<short-kebab-case-description>`:
+
+- `feature/` for new functionality
+- `fix/` for bug fixes
+- `chore/` for maintenance, documentation, tests, and release work
+
+Apply the same rule to agent-created branches; do not use `codex/`.
+
 ## Build
 
 ```bash
