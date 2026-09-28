@@ -88,7 +88,7 @@ mvn -B clean verify
 testing/remote-delta-smoke/run.sh
 ```
 
-This starts local and remote Trino containers, MinIO, and Hive Metastore for
+This starts local and remote Trino containers, Adobe S3Mock, and Hive Metastore for
 the remote Delta smoke test.
 Failure diagnostics are written to `target/remote-delta-smoke/`. See
 `docs/remote-delta-smoke.md` for details.
